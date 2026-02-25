@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Happy Birthday, Freedom</title>
 <style>
+  html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Use stable viewport units on mobile (prevents jump) */
+body{
+  min-height: 100vh;     /* fallback */
+  min-height: 100svh;    /* stable viewport height on mobile */
+  overflow: hidden;
+}
   body{
     margin:0;
     background:#0b0c10;
@@ -25,7 +39,7 @@
 
   .book{
     position:relative;
-    width:min(92vw,900px);
+    width:min(92%,900px);
     height:min(70vh,650px);
     perspective:2200px;
   }
