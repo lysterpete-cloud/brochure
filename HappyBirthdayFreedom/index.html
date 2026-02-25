@@ -36,7 +36,26 @@ body{
     justify-content:center;
     align-items:center;
   }
+.book{
+  overflow: hidden;   /* important */
+}
 
+/* hides the “peek” on the left edge during flips */
+.spine-mask{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  width:16px;         /* adjust 12–22px if needed */
+  z-index: 999999;    /* above pages */
+  pointer-events:none;
+  background: linear-gradient(
+    to right,
+    rgba(0,0,0,0.85),
+    rgba(0,0,0,0.35),
+    rgba(0,0,0,0)
+  );
+}
   .book{
     position:relative;
     width:min(92%,900px);
@@ -151,6 +170,7 @@ body{
   <div class="controls">
     <button id="prevBtn" onclick="prevPage()">Prev</button>
     <button id="nextBtn" onclick="nextPage()">Next</button>
+<div class="spine-mask" aria-hidden="true"></div>
   </div>
 
   <audio id="flipSound" src="assets/flip.mp4" preload="auto"></audio>
