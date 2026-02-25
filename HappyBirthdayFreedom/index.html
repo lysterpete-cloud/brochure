@@ -1,191 +1,136 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Happy Birthday, Freedom</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Happy Birthday, Freedom</title>
+<style>
+  body{
+    margin:0;
+    background:#0b0c10;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    overflow:hidden;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  }
 
-  <style>
-    html, body {
-      width: 100%;
-      max-width: 100%;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-    }
+  .stage{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
 
-    body{
-      background:#0b0c10;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      min-height: 100vh;   /* fallback */
-      min-height: 100svh;  /* stable viewport height on mobile */
-      overflow:hidden;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    }
+  .book{
+    position:relative;
+    width:min(92vw,900px);
+    height:min(70vh,650px);
+    perspective:2200px;
+  }
 
-    .stage{
-      width:100%;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding: 0 12px;
-      box-sizing:border-box;
-    }
+  .page{
+    position:absolute;
+    inset:0;
+    transform-origin:left center;
+    transform-style:preserve-3d;
+    transition:transform 0.95s cubic-bezier(.55,.06,.68,.19);
+    box-shadow:0 20px 55px rgba(0,0,0,.62);
+    background:#111;
+    cursor:pointer;
+    border-radius:10px;
+    overflow:hidden;
+  }
 
-    .book{
-      position:relative;
-      width: 100%;
-      max-width: 900px;
-      height: min(70svh, 650px);
-      margin: 0 auto;
-      perspective:2200px;
-      overflow:hidden; /* IMPORTANT: prevents 3D bleed */
-    }
+  .page img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    backface-visibility:hidden;
+    pointer-events:none;
+    display:block;
+  }
 
-    .page{
-      position:absolute;
-      inset:0;
-      left:0;
-      right:0;
-      transform-origin:left center;
-      transform-style:preserve-3d;
-      transition:transform 0.95s cubic-bezier(.55,.06,.68,.19);
-      box-shadow:0 20px 55px rgba(0,0,0,.62);
+  .page.flipped{
+    transform:rotateY(-180deg);
+  }
 
-      /* ✅ CHANGE: prevent dark backside on iOS */
-      background: transparent;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
+  /* Controls */
+  .controls{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:18px;
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    z-index:10000;
+    padding:0 12px;
+  }
 
-      cursor:pointer;
-      border-radius:10px;
-      overflow:hidden;
+  button{
+    padding:10px 18px;
+    border-radius:10px;
+    border:none;
+    background:#1f2430;
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 10px 24px rgba(0,0,0,.35);
+  }
+  button:hover{ background:#2d3342; }
+  button:disabled{ opacity:.45; cursor:not-allowed; }
 
-      will-change: transform;
-      transform: translateZ(0);
-    }
+  /* End-only Start Over button (center) */
+  .restart-btn{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    padding:14px 22px;
+    border-radius:12px;
+    border:none;
+    background: rgba(255,255,255,0.10);
+    color:#fff;
+    font-size:16px;
+    cursor:pointer;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    display:none;
+    z-index:99999;
+  }
+  .restart-btn:hover{
+    background: rgba(255,255,255,0.16);
+  }
 
-    .page img{
-      width:100%;
-      height:100%;
-      object-fit:contain;
+  /* Mobile tweaks */
+  @media (max-width:600px){
+    .book{ height:min(74vh,720px); }
+    button{ padding:10px 14px; }
+  }
 
-      /* ✅ CHANGE: iOS needs this on the image too */
-      -webkit-backface-visibility: hidden;
-      backface-visibility:hidden;
-
-      pointer-events:none;
-      display:block;
-    }
-
-    .page.flipped{
-      transform:rotateY(-180deg);
-    }
-
-    /* Hides the “peek” on the left edge during flips */
-    .spine-mask{
-      position:absolute;
-      top:0;
-      bottom:0;
-      left:0;
-      width:16px;          /* adjust 12–22px if needed */
-      z-index: 999999;     /* above pages */
-      pointer-events:none;
-      background: linear-gradient(
-        to right,
-        rgba(0,0,0,0.85),
-        rgba(0,0,0,0.35),
-        rgba(0,0,0,0)
-      );
-    }
-
-    /* Controls */
-    .controls{
-      position:fixed;
-      left:0;
-      right:0;
-      bottom:18px;
-      display:flex;
-      justify-content:center;
-      gap:12px;
-      z-index:10000;
-      padding:0 12px;
-    }
-
-    button{
-      padding:10px 18px;
-      border-radius:10px;
-      border:none;
-      background:#1f2430;
-      color:#fff;
-      cursor:pointer;
-      box-shadow:0 10px 24px rgba(0,0,0,.35);
-    }
-    button:hover{ background:#2d3342; }
-    button:disabled{ opacity:.45; cursor:not-allowed; }
-
-    /* End-only Start Over button (center) */
-    .restart-btn{
-      position:absolute;
-      top:50%;
-      left:50%;
-      transform:translate(-50%,-50%);
-      padding:14px 22px;
-      border-radius:12px;
-      border:none;
-      background: rgba(255,255,255,0.10);
-      color:#fff;
-      font-size:16px;
-      cursor:pointer;
-      backdrop-filter: blur(6px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-      display:none;
-      z-index:999998; /* below spine-mask but above pages */
-    }
-    .restart-btn:hover{
-      background: rgba(255,255,255,0.16);
-    }
-
-    /* Mobile tweaks */
-    @media (max-width:600px){
-      .book{ height: min(74svh, 720px); }
-      button{ padding:10px 14px; }
-      /* Optional: reduce curvature on mobile */
-      .book{ perspective: 1600px; }
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      .page{ transition:none !important; }
-    }
-  </style>
+  @media (prefers-reduced-motion: reduce){
+    .page{ transition:none !important; }
+  }
+</style>
 </head>
-
 <body>
   <div class="stage">
     <div class="book" id="book">
-
-      <!-- Pages -->
-      <div class="page" data-index="0"><img src="assets/img/page-01.webp" alt="Page 1"></div>
-      <div class="page" data-index="1"><img src="assets/img/page-02.webp" alt="Page 2"></div>
-      <div class="page" data-index="2"><img src="assets/img/page-03.webp" alt="Page 3"></div>
-      <div class="page" data-index="3"><img src="assets/img/page-04.webp" alt="Page 4"></div>
-      <div class="page" data-index="4"><img src="assets/img/page-05.webp" alt="Page 5"></div>
-      <div class="page" data-index="5"><img src="assets/img/page-06.webp" alt="Page 6"></div>
-      <div class="page" data-index="6"><img src="assets/img/page-07.webp" alt="Page 7"></div>
-      <div class="page" data-index="7"><img src="assets/img/page-08.webp" alt="Page 8"></div>
-      <div class="page" data-index="8"><img src="assets/img/page-09.webp" alt="Page 9"></div>
-      <div class="page" data-index="9"><img src="assets/img/page-10.webp" alt="Page 10"></div>
-      <div class="page" data-index="10"><img src="assets/img/page-11.webp" alt="Page 11"></div>
-      <div class="page" data-index="11"><img src="assets/img/page-12.webp" alt="Page 12"></div>
-      <div class="page" data-index="12"><img src="assets/img/page-13.webp" alt="Page 13"></div>
-
-      <!-- End-only restart button -->
+      <div class="page" data-index="0" onclick="nextPage()"><img src="assets/img/page-01.webp" alt="Page 1"></div>
+<div class="page" data-index="1" onclick="nextPage()"><img src="assets/img/page-02.webp" alt="Page 2"></div>
+<div class="page" data-index="2" onclick="nextPage()"><img src="assets/img/page-03.webp" alt="Page 3"></div>
+<div class="page" data-index="3" onclick="nextPage()"><img src="assets/img/page-04.webp" alt="Page 4"></div>
+<div class="page" data-index="4" onclick="nextPage()"><img src="assets/img/page-05.webp" alt="Page 5"></div>
+<div class="page" data-index="5" onclick="nextPage()"><img src="assets/img/page-06.webp" alt="Page 6"></div>
+<div class="page" data-index="6" onclick="nextPage()"><img src="assets/img/page-07.webp" alt="Page 7"></div>
+<div class="page" data-index="7" onclick="nextPage()"><img src="assets/img/page-08.webp" alt="Page 8"></div>
+<div class="page" data-index="8" onclick="nextPage()"><img src="assets/img/page-09.webp" alt="Page 9"></div>
+<div class="page" data-index="9" onclick="nextPage()"><img src="assets/img/page-10.webp" alt="Page 10"></div>
+<div class="page" data-index="10" onclick="nextPage()"><img src="assets/img/page-11.webp" alt="Page 11"></div>
+<div class="page" data-index="11" onclick="nextPage()"><img src="assets/img/page-12.webp" alt="Page 12"></div>
+<div class="page" data-index="12" onclick="nextPage()"><img src="assets/img/page-13.webp" alt="Page 13"></div>
       <button class="restart-btn" id="restartBtn" onclick="startOver()">Start Over</button>
-
-      <!-- Mask to hide left-edge peek -->
-      <div class="spine-mask" aria-hidden="true"></div>
     </div>
   </div>
 
@@ -196,93 +141,78 @@
 
   <audio id="flipSound" src="assets/flip.mp4" preload="auto"></audio>
 
-  <script>
-    const pages = document.querySelectorAll('.page');
-    let current = 0;
+<script>
+  const pages = document.querySelectorAll('.page');
+  let current = 0;
 
-    // Stack pages initially
-    pages.forEach((p, i) => {
-      p.style.zIndex = pages.length - i;
-    });
+  pages.forEach((p, i) => {
+    p.style.zIndex = pages.length - i;
+  });
 
-    const restartBtn = document.getElementById("restartBtn");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const flipSound = document.getElementById("flipSound");
-    const bookEl = document.getElementById("book");
+  const restartBtn = document.getElementById("restartBtn");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const flipSound = document.getElementById("flipSound");
 
-    function playSound(){
-      try {
-        flipSound.currentTime = 0;
-        flipSound.play();
-      } catch(e) {}
-    }
+  function playSound(){
+    try {
+      flipSound.currentTime = 0;
+      flipSound.play();
+    } catch(e) {}
+  }
 
-    function updateUI(){
-      restartBtn.style.display = (current === pages.length) ? "block" : "none";
-      prevBtn.disabled = (current === 0);
-      nextBtn.disabled = (current === pages.length);
-    }
+  function updateUI(){
+    restartBtn.style.display = (current === pages.length) ? "block" : "none";
+    prevBtn.disabled = (current === 0);
+    nextBtn.disabled = (current === pages.length);
+  }
 
-    function nextPage(){
-      if (current < pages.length) {
-        pages[current].classList.add('flipped');
-
-        /* ✅ CHANGE: send flipped page behind remaining stack */
-        pages[current].style.zIndex = current;
-
-        playSound();
-        current++;
-        updateUI();
-      }
-    }
-
-    function prevPage(){
-      if (current > 0) {
-        current--;
-
-        pages[current].classList.remove('flipped');
-
-        /* ✅ CHANGE: restore z-index when unflipping */
-        pages[current].style.zIndex = pages.length - current;
-
-        playSound();
-        updateUI();
-      }
-    }
-
-    function startOver(){
-      while (current > 0) {
-        current--;
-        pages[current].classList.remove('flipped');
-        pages[current].style.zIndex = pages.length - current; /* restore stack */
-      }
+  function nextPage(){
+    if (current < pages.length) {
+      pages[current].classList.add('flipped');
+      playSound();
+      current++;
       updateUI();
     }
+  }
 
-    // Keyboard support
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowRight") nextPage();
-      if (e.key === "ArrowLeft") prevPage();
-    });
+  function prevPage(){
+    if (current > 0) {
+      current--;
+      pages[current].classList.remove('flipped');
+      playSound();
+      updateUI();
+    }
+  }
 
-    // ✅ CHANGE: Only use ONE click handler (edge-tap)
-    // (Removed pages.forEach(click => nextPage()) to prevent double flip)
-    bookEl.addEventListener("click", (e) => {
-      if (e.target && e.target.id === "restartBtn") return;
-
-      const rect = bookEl.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-
-      if (x < rect.width * 0.35) {
-        prevPage();
-      } else if (x > rect.width * 0.65) {
-        nextPage();
-      }
-      // middle does nothing
-    });
-
+  function startOver(){
+    while (current > 0) {
+      current--;
+      pages[current].classList.remove('flipped');
+    }
     updateUI();
-  </script>
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") nextPage();
+    if (e.key === "ArrowLeft") prevPage();
+  });
+
+  // Tap/click left/right edges to navigate (great on mobile)
+  document.getElementById("book").addEventListener("click", (e) => {
+    if (e.target && e.target.id === "restartBtn") return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    if (x < rect.width * 0.35) {
+      prevPage();
+      e.stopPropagation();
+    } else if (x > rect.width * 0.65) {
+      nextPage();
+      e.stopPropagation();
+    }
+  });
+
+  updateUI();
+</script>
 </body>
 </html>
