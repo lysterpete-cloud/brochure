@@ -5,8 +5,39 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Happy Birthday, Freedom — Mobile Brochure</title>
   <link rel="stylesheet" href="assets/styles.css" />
+
+  <style>
+    /* Back To Top Button */
+    .back-to-top{
+      position: fixed;
+      bottom: 20px;
+      right: 18px;
+      padding: 10px 14px;
+      font-size: 14px;
+      border-radius: 999px;
+      text-decoration: none;
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.15);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 25px rgba(0,0,0,.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s ease, transform .3s ease;
+      transform: translateY(10px);
+      z-index: 99999;
+    }
+
+    .back-to-top.show{
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+  </style>
 </head>
+
 <body>
+
   <div class="header">
     <div class="brand">
       <div class="title">Happy Birthday, Freedom</div>
@@ -123,6 +154,30 @@
     <img id="lightboxImg" alt="" />
   </div>
 
+ <!-- Back To Top Button -->
+  <a href="#" id="backToTop" class="back-to-top">↑ Back to Top</a>
+
   <script src="assets/app.js"></script>
+
+  <script>
+    const backToTop = document.getElementById("backToTop");
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 300) {
+        backToTop.classList.add("show");
+      } else {
+        backToTop.classList.remove("show");
+      }
+    });
+
+    backToTop.addEventListener("click", function(e){
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    });
+  </script>
+
 </body>
 </html>
