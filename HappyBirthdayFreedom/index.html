@@ -76,21 +76,23 @@
     }
 
     /* Hides the “peek” on the left edge during flips */
-    .spine-mask{
-      position:absolute;
-      top:0;
-      bottom:0;
-      left:0;
-      width:16px;          /* adjust 12–22px if needed */
-      z-index: 999999;     /* above pages */
-      pointer-events:none;
-      background: linear-gradient(
-        to right,
-        rgba(0,0,0,0.85),
-        rgba(0,0,0,0.35),
-        rgba(0,0,0,0)
-      );
-    }
+.spine-mask{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  width:10px;              /* was 16px — smaller */
+  z-index: 999999;
+  pointer-events:none;
+
+  /* much lighter fade */
+  background: linear-gradient(
+    to right,
+    rgba(0,0,0,0.28),
+    rgba(0,0,0,0.12),
+    rgba(0,0,0,0)
+  );
+}
 
     /* Controls */
     .controls{
